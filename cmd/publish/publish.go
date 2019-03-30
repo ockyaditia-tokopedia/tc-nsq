@@ -7,12 +7,12 @@ import (
 func main() {
 	// initiate producer
 	prodConf := messaging.ProducerConfig{
-		NsqdAddress: "", // TODO: update to nsqd address
+		NsqdAddress: "devel-go.tkpd:4150", // TODO: update to nsqd address
 	}
 	prod := messaging.NewProducer(prodConf)
 
 	// publish message
-	topic := "" // TODO: update to given topic name
-	msg := ""   // TODO: write your message here
+	topic := "nsq_0319" // TODO: update to given topic name
+	msg := "Hajar bre"  // TODO: write your message here
 	prod.Publish(topic, msg)
 }

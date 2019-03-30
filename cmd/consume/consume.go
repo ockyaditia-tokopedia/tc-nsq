@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/nsqio/go-nsq"
 	"github.com/tkp-junnotantra/tc-nsq/messaging"
@@ -18,12 +20,12 @@ const (
 func main() {
 	// initiate consumer
 	cfg := messaging.ConsumerConfig{
-		Channel:       "", // TODO: update to given channel name
-		LookupAddress: "", // TODO: update to nsqlookups adress
-		Topic:         "", // TODO: update to given topic name
+		Channel:       "ocky",               // TODO: update to given channel name
+		LookupAddress: "devel-go.tkpd:4161", // TODO: update to nsqlookups adress
+		Topic:         "nsq_0319",           // TODO: update to given topic name
 		MaxAttempts:   defaultConsumerMaxAttempts,
 		MaxInFlight:   defaultConsumerMaxInFlight,
-		Handler:       requeueMessage,
+		Handler:       handleMessage,
 	}
 	consumer := messaging.NewConsumer(cfg)
 
@@ -41,10 +43,14 @@ func main() {
 
 func handleMessage(message *nsq.Message) error {
 	// TODO: print and finish message
+	log.Println(string(message.Body))
+	message.Finish()
 	return nil
 }
 
 func requeueMessage(message *nsq.Message) error {
 	// TODO: requeue message
-	return nil
+	log.Println(string(message.Body))
+	message.Requeue(3 * time.Second)
+	return errors.New("Fail")
 }
